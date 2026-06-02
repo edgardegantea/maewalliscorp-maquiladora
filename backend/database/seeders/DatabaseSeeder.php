@@ -233,17 +233,32 @@ class DatabaseSeeder extends Seeder
         // 12. ÓRDENES DE PRODUCCIÓN (8)
         // ══════════════════════════════════════════════════════════════════════
         $ord = [];
+        // [$cod, $cliId, $prio, $mod, $cor, $ent, $sts, $cortC, $obs, $estiloIdx, $cantPiezas]
         foreach ([
-            ['OP-2026-001',$cli[0],'alta',  'BL-MANGA-045','CORTE-0501','2026-06-05','en_proceso', false,'Cliente solicita entrega urgente. Tela 100% algodón pima.'],
-            ['OP-2026-002',$cli[1],'media', 'PT-VESTIR-12','CORTE-0489','2026-06-15','en_proceso', true, 'Modelo slim fit. Verificar medidas con ficha técnica adjunta.'],
-            ['OP-2026-003',$cli[2],'alta',  'VE-CASUAL-08','CORTE-0502','2026-06-02','pendiente',  false,'Nueva colección verano. Requiere muestra aprobada antes de producción.'],
-            ['OP-2026-004',$cli[3],'baja',  'UN-POLO-031', 'CORTE-0478','2026-05-30','completada', true, 'Uniformes empresa logística. Entrega completada sin observaciones.'],
-            ['OP-2026-005',$cli[0],'media', 'BL-FORMAL-22','CORTE-0510','2026-06-20','pendiente',  false,null],
-            ['OP-2026-006',$cli[4],'alta',  'FA-MIDI-004', 'CORTE-0518','2026-06-10','en_proceso', true, 'Falda midi para exportación. Entrega en tres lotes parciales.'],
-            ['OP-2026-007',$cli[5],'media', 'SD-CAPUCHA-7','CORTE-0522','2026-06-28','pendiente',  false,'Sudadera unisex. Primera orden de este cliente.'],
-            ['OP-2026-008',$cli[2],'baja',  'CM-FORM-010', 'CORTE-0495','2026-05-20','cancelada',  false,'Cancelada por cliente. Tela ya cortada — reutilizar en OP-2026-005.'],
-        ] as [$cod,$cliId,$prio,$mod,$cor,$ent,$sts,$cortC,$obs]) {
-            $ord[] = DB::table('ordenes_produccion')->insertGetId(['empresa_id'=>$eid,'cliente_id'=>$cliId,'codigo'=>$cod,'modelo'=>$mod,'corte'=>$cor,'fecha_entrega'=>$ent,'prioridad'=>$prio,'corte_comenzado'=>$cortC,'status'=>$sts,'observaciones'=>$obs,'created_at'=>now(),'updated_at'=>now()]);
+            ['OP-2026-001',$cli[0],'alta',  'BL-MANGA-045','CORTE-0501','2026-06-05','en_proceso', false,'Cliente solicita entrega urgente. Tela 100% algodón pima.',   0, 1200],
+            ['OP-2026-002',$cli[1],'media', 'PT-VESTIR-12','CORTE-0489','2026-06-15','en_proceso', true, 'Modelo slim fit. Verificar medidas con ficha técnica adjunta.',1,  800],
+            ['OP-2026-003',$cli[2],'alta',  'VE-CASUAL-08','CORTE-0502','2026-06-02','pendiente',  false,'Nueva colección verano. Muestra pendiente de aprobación.',      2,  500],
+            ['OP-2026-004',$cli[3],'baja',  'UN-POLO-031', 'CORTE-0478','2026-05-30','completada', true, 'Uniformes empresa logística. Entrega completada.',             null,750],
+            ['OP-2026-005',$cli[0],'media', 'BL-FORMAL-22','CORTE-0510','2026-06-20','pendiente',  false,null,                                                           0,  600],
+            ['OP-2026-006',$cli[4],'alta',  'FA-MIDI-004', 'CORTE-0518','2026-06-10','en_proceso', true, 'Falda midi para exportación. Entrega en tres lotes parciales.',5,  600],
+            ['OP-2026-007',$cli[5],'media', 'SD-CAPUCHA-7','CORTE-0522','2026-06-28','pendiente',  false,'Sudadera unisex. Primera orden de este cliente.',              6,  400],
+            ['OP-2026-008',$cli[2],'baja',  'CM-FORM-010', 'CORTE-0495','2026-05-20','cancelada',  false,'Cancelada. Tela ya cortada — reutilizar en OP-2026-005.',      4, null],
+        ] as [$cod,$cliId,$prio,$mod,$cor,$ent,$sts,$cortC,$obs,$estiloIdx,$cantPiezas]) {
+            $ord[] = DB::table('ordenes_produccion')->insertGetId([
+                'empresa_id'      => $eid,
+                'cliente_id'      => $cliId,
+                'estilo_id'       => $estiloIdx !== null ? $est[$estiloIdx] : null,
+                'codigo'          => $cod,
+                'modelo'          => $mod,
+                'corte'           => $cor,
+                'cantidad_piezas' => $cantPiezas,
+                'fecha_entrega'   => $ent,
+                'prioridad'       => $prio,
+                'corte_comenzado' => $cortC,
+                'status'          => $sts,
+                'observaciones'   => $obs,
+                'created_at'      => now(), 'updated_at' => now(),
+            ]);
         }
 
         // ══════════════════════════════════════════════════════════════════════
@@ -649,6 +664,89 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // ══════════════════════════════════════════════════════════════════════
+        // 29. CORTES DE NÓMINA (2: uno pagado, uno en borrador)
+        // ══════════════════════════════════════════════════════════════════════
+        // Corte 1: quincena abril-mayo (pagado)
+        $corte1Id = DB::table('cortes_nomina')->insertGetId([
+            'empresa_id'    => $eid,
+            'nombre'        => 'Quincena 28 Abr – 16 May 2026',
+            'fecha_inicio'  => '2026-04-28',
+            'fecha_fin'     => '2026-05-16',
+            'status'        => 'pagado',
+            'observaciones' => 'Quincena completa. Incluye semanas 1, 2 y 3.',
+            'creado_por'    => $userAdmin,
+            'created_at'    => now(), 'updated_at' => now(),
+        ]);
+        // Líneas para los empleados que tienen hojas en ese rango (hoja índices 0..7)
+        $lineasCorte1 = [
+            [$emp[5], $hojaIds[0], $hojaIds[1]],
+            [$emp[0], $hojaIds[2]],
+            [$emp[1], $hojaIds[3]],
+            [$emp[3], $hojaIds[4]],
+            [$emp[2], $hojaIds[5]],
+            [$emp[4], $hojaIds[6]],
+            [$emp[6], $hojaIds[7]],
+        ];
+        foreach ($lineasCorte1 as $linea) {
+            $empId   = $linea[0];
+            $hojaIdxs = array_slice($linea, 1);
+            $totalH  = DB::table('hojas_produccion')->whereIn('id', $hojaIdxs)->sum('total_a_pagar');
+            DB::table('corte_nomina_empleado')->insert([
+                'corte_nomina_id' => $corte1Id,
+                'empleado_id'     => $empId,
+                'total_hojas'     => count($hojaIdxs),
+                'importe'         => $totalH,
+                'ajuste'          => 0,
+                'total_a_pagar'   => $totalH,
+                'monto_pagado'    => $totalH,
+                'status'          => 'pagado',
+                'metodo_pago'     => 'transferencia',
+                'fecha_pago'      => '2026-05-17',
+                'observaciones'   => null,
+                'created_at'      => now(), 'updated_at' => now(),
+            ]);
+        }
+
+        // Corte 2: quincena mayo (borrador — en proceso)
+        $corte2Id = DB::table('cortes_nomina')->insertGetId([
+            'empresa_id'    => $eid,
+            'nombre'        => 'Quincena 19 May – 6 Jun 2026',
+            'fecha_inicio'  => '2026-05-19',
+            'fecha_fin'     => '2026-06-06',
+            'status'        => 'borrador',
+            'observaciones' => 'Pendiente de revisión y autorización.',
+            'creado_por'    => $userAdmin,
+            'created_at'    => now(), 'updated_at' => now(),
+        ]);
+        $lineasCorte2 = [
+            [$emp[0], $hojaIds[8],  $hojaIds[12], $hojaIds[16]],
+            [$emp[1], $hojaIds[9],  $hojaIds[13]],
+            [$emp[3], $hojaIds[10], $hojaIds[17]],
+            [$emp[5], $hojaIds[11]],
+            [$emp[4], $hojaIds[14]],
+            [$emp[7], $hojaIds[15]],
+        ];
+        foreach ($lineasCorte2 as $linea) {
+            $empId   = $linea[0];
+            $hojaIdxs = array_slice($linea, 1);
+            $totalH  = DB::table('hojas_produccion')->whereIn('id', $hojaIdxs)->sum('total_a_pagar');
+            DB::table('corte_nomina_empleado')->insert([
+                'corte_nomina_id' => $corte2Id,
+                'empleado_id'     => $empId,
+                'total_hojas'     => count($hojaIdxs),
+                'importe'         => $totalH,
+                'ajuste'          => 0,
+                'total_a_pagar'   => $totalH,
+                'monto_pagado'    => 0,
+                'status'          => 'pendiente',
+                'metodo_pago'     => null,
+                'fecha_pago'      => null,
+                'observaciones'   => null,
+                'created_at'      => now(), 'updated_at' => now(),
+            ]);
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
         // RESUMEN
         // ══════════════════════════════════════════════════════════════════════
         $this->command->info('');
@@ -691,6 +789,7 @@ class DatabaseSeeder extends Seeder
             ['cuentas_pagar',           DB::table('cuentas_pagar')->count()],
             ['permisos_empleado',       DB::table('permisos_empleado')->count()],
             ['aclaraciones_produccion', DB::table('aclaraciones_produccion')->count()],
+            ['cortes_nomina / líneas',  DB::table('cortes_nomina')->count().' / '.DB::table('corte_nomina_empleado')->count()],
         ]);
     }
 }
