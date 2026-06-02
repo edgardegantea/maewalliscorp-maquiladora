@@ -4,6 +4,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -162,18 +163,18 @@ class DatabaseSeeder extends Seeder
         // ══════════════════════════════════════════════════════════════════════
         $est = [];
         foreach ([
-            ['EST-001','Blusa Manga Larga Dama',      'Blusa clásica manga larga para dama',              'Blusas'],
-            ['EST-002','Pantalón de Vestir Dama',     'Pantalón de corte recto para dama',                'Pantalones'],
-            ['EST-003','Vestido Casual',              'Vestido de uso diario, largo a la rodilla',        'Vestidos'],
-            ['EST-004','Conjunto Deportivo',          'Top y short deportivo unisex',                     'Deportivo'],
-            ['EST-005','Camisa Formal Caballero',     'Camisa de vestir manga larga caballero',           'Camisas'],
-            ['EST-006','Falda Midi',                  'Falda hasta media pierna, corte A',                'Faldas'],
-            ['EST-007','Sudadera con Capucha',        'Sudadera unisex con capucha y bolsillo canguro',   'Deportivo'],
-            ['EST-008','Blusa Sin Manga Dama',        'Blusa casual sin mangas, cuello en V',             'Blusas'],
-            ['EST-009','Uniforme Polo Caballero',     'Polo piqué manga corta con bordado',               'Uniformes'],
-            ['EST-010','Pantalón Cargo Dama',         'Pantalón cargo con bolsillos laterales',           'Pantalones'],
-        ] as [$cod,$n,$d,$c]) {
-            $est[] = DB::table('estilos')->insertGetId(['empresa_id'=>$eid,'codigo'=>$cod,'nombre'=>$n,'descripcion'=>$d,'categoria'=>$c,'status'=>'activo','created_at'=>now(),'updated_at'=>now()]);
+            ['Blusa Manga Larga Dama',      'Blusa clásica manga larga para dama',              'Blusas'],
+            ['Pantalón de Vestir Dama',     'Pantalón de corte recto para dama',                'Pantalones'],
+            ['Vestido Casual',              'Vestido de uso diario, largo a la rodilla',        'Vestidos'],
+            ['Conjunto Deportivo',          'Top y short deportivo unisex',                     'Deportivo'],
+            ['Camisa Formal Caballero',     'Camisa de vestir manga larga caballero',           'Camisas'],
+            ['Falda Midi',                  'Falda hasta media pierna, corte A',                'Faldas'],
+            ['Sudadera con Capucha',        'Sudadera unisex con capucha y bolsillo canguro',   'Deportivo'],
+            ['Blusa Sin Manga Dama',        'Blusa casual sin mangas, cuello en V',             'Blusas'],
+            ['Uniforme Polo Caballero',     'Polo piqué manga corta con bordado',               'Uniformes'],
+            ['Pantalón Cargo Dama',         'Pantalón cargo con bolsillos laterales',           'Pantalones'],
+        ] as [$n,$d,$c]) {
+            $est[] = DB::table('estilos')->insertGetId(['empresa_id'=>$eid,'nombre'=>$n,'descripcion'=>$d,'categoria'=>$c,'status'=>'activo','created_at'=>now(),'updated_at'=>now()]);
         }
 
         // ══════════════════════════════════════════════════════════════════════
@@ -360,13 +361,20 @@ class DatabaseSeeder extends Seeder
             ['OP-2026-019',$cli[5],'alta',  'SD-CAP-012',  'C-0572','2026-07-01','pendiente',  false,'Sudadera negra y gris.',                 6, 600],
             ['OP-2026-020',$cli[6],'media', 'BL-SIN-MAN-5','C-0576','2026-07-08','pendiente',  false,'Blusa sin manga colores básicos.',       7, 700],
         ];
+        // Detectar si las columnas nuevas ya existen (migración 2026_06_02)
+        $tieneEstiloId      = Schema::hasColumn('ordenes_produccion', 'estilo_id');
+        $tieneCantidadPiezas= Schema::hasColumn('ordenes_produccion', 'cantidad_piezas');
+
         foreach ($ordenesDef as [$cod,$cliId,$prio,$mod,$cor,$ent,$sts,$cortC,$obs,$estIdx,$cant]) {
-            $ord[] = DB::table('ordenes_produccion')->insertGetId([
-                'empresa_id'=>$eid,'cliente_id'=>$cliId,'estilo_id'=>$estIdx!==null?$est[$estIdx]:null,
-                'codigo'=>$cod,'modelo'=>$mod,'corte'=>$cor,'cantidad_piezas'=>$cant,
+            $row = [
+                'empresa_id'=>$eid,'cliente_id'=>$cliId,
+                'codigo'=>$cod,'modelo'=>$mod,'corte'=>$cor,
                 'fecha_entrega'=>$ent,'prioridad'=>$prio,'corte_comenzado'=>$cortC,
                 'status'=>$sts,'observaciones'=>$obs,'created_at'=>now(),'updated_at'=>now(),
-            ]);
+            ];
+            if ($tieneEstiloId)       $row['estilo_id']       = $estIdx !== null ? $est[$estIdx] : null;
+            if ($tieneCantidadPiezas) $row['cantidad_piezas'] = $cant;
+            $ord[] = DB::table('ordenes_produccion')->insertGetId($row);
         }
 
         // Curvas de talla para las primeras 6 órdenes
@@ -675,36 +683,58 @@ class DatabaseSeeder extends Seeder
 
         // ══════════════════════════════════════════════════════════════════════
         // 25. CORTES DE NÓMINA (4)
+        // Columnas reales en corte_nomina_empleado:
+        //   num_hojas, total_hojas (decimal), deducciones, total_neto,
+        //   status, fecha_pago, metodo_pago, referencia_pago, observaciones
         // ══════════════════════════════════════════════════════════════════════
+        $insertLinea = function(int $corteId, int $empId, array $hIds, string $status, ?string $fechaPago, ?string $metodo) {
+            $hIds = array_unique(array_filter($hIds, fn($id) => isset($id)));
+            if (empty($hIds)) return;
+            $total = (float) DB::table('hojas_produccion')->whereIn('id',$hIds)->sum('total_a_pagar');
+            if ($total == 0) return;
+            // Evitar duplicado por unique(corte_nomina_id, empleado_id)
+            $exists = DB::table('corte_nomina_empleado')
+                ->where('corte_nomina_id',$corteId)->where('empleado_id',$empId)->exists();
+            if ($exists) return;
+            DB::table('corte_nomina_empleado')->insert([
+                'corte_nomina_id' => $corteId,
+                'empleado_id'     => $empId,
+                'num_hojas'       => count($hIds),
+                'total_hojas'     => $total,
+                'deducciones'     => 0,
+                'total_neto'      => $total,
+                'status'          => $status,
+                'fecha_pago'      => $fechaPago,
+                'metodo_pago'     => $metodo,
+                'referencia_pago' => null,
+                'observaciones'   => null,
+                'created_at'      => now(), 'updated_at' => now(),
+            ]);
+        };
+
         // Corte 1 — Quincena Feb (pagado)
         $c1 = DB::table('cortes_nomina')->insertGetId(['empresa_id'=>$eid,'nombre'=>'Quincena 24 Feb – 14 Mar 2026','fecha_inicio'=>'2026-02-24','fecha_fin'=>'2026-03-14','status'=>'pagado','observaciones'=>'Primeras 3 semanas de temporada.','creado_por'=>$userAdmin,'created_at'=>now(),'updated_at'=>now()]);
         foreach ([[$emp[5],[$hojaIds[0],$hojaIds[1]]],[$emp[16],[$hojaIds[2]]],[$emp[17],[$hojaIds[3]]],[$emp[0],[$hojaIds[4]]],[$emp[1],[$hojaIds[5]]],[$emp[20],[$hojaIds[6]]]] as [$empId,$hIds]) {
-            $imp = DB::table('hojas_produccion')->whereIn('id',$hIds)->sum('total_a_pagar');
-            DB::table('corte_nomina_empleado')->insert(['corte_nomina_id'=>$c1,'empleado_id'=>$empId,'total_hojas'=>count($hIds),'importe'=>$imp,'ajuste'=>0,'total_a_pagar'=>$imp,'monto_pagado'=>$imp,'status'=>'pagado','metodo_pago'=>'transferencia','fecha_pago'=>'2026-03-16','observaciones'=>null,'created_at'=>now(),'updated_at'=>now()]);
+            $insertLinea($c1,$empId,$hIds,'pagado','2026-03-16','transferencia');
         }
 
         // Corte 2 — Quincena Mar (pagado)
         $c2 = DB::table('cortes_nomina')->insertGetId(['empresa_id'=>$eid,'nombre'=>'Quincena 17 Mar – 4 Abr 2026','fecha_inicio'=>'2026-03-17','fecha_fin'=>'2026-04-04','status'=>'pagado','observaciones'=>'Semanas 4, 5 y 6.','creado_por'=>$userAdmin,'created_at'=>now(),'updated_at'=>now()]);
         foreach ([[$emp[3],[$hojaIds[7]]],[$emp[21],[$hojaIds[8]]],[$emp[4],[$hojaIds[9]]],[$emp[7],[$hojaIds[10]]],[$emp[22],[$hojaIds[11]]],[$emp[0],[$hojaIds[12]]],[$emp[1],[$hojaIds[13]]],[$emp[23],[$hojaIds[14]]]] as [$empId,$hIds]) {
-            $imp = DB::table('hojas_produccion')->whereIn('id',$hIds)->sum('total_a_pagar');
-            DB::table('corte_nomina_empleado')->insert(['corte_nomina_id'=>$c2,'empleado_id'=>$empId,'total_hojas'=>count($hIds),'importe'=>$imp,'ajuste'=>0,'total_a_pagar'=>$imp,'monto_pagado'=>$imp,'status'=>'pagado','metodo_pago'=>'transferencia','fecha_pago'=>'2026-04-05','observaciones'=>null,'created_at'=>now(),'updated_at'=>now()]);
+            $insertLinea($c2,$empId,$hIds,'pagado','2026-04-05','transferencia');
         }
 
         // Corte 3 — Quincena Abr-May (pagado)
         $c3 = DB::table('cortes_nomina')->insertGetId(['empresa_id'=>$eid,'nombre'=>'Quincena 7 Abr – 16 May 2026','fecha_inicio'=>'2026-04-07','fecha_fin'=>'2026-05-16','status'=>'pagado','observaciones'=>'Semanas 7, 8, 9 y 10.','creado_por'=>$userAdmin,'created_at'=>now(),'updated_at'=>now()]);
-        foreach ([[$emp[3],[$hojaIds[15]]],[$emp[24],[$hojaIds[16]]],[$emp[25],[$hojaIds[17]]],[$emp[5],[$hojaIds[18],$hojaIds[22]]],[$emp[6],[$hojaIds[19],$hojaIds[26]]],[$emp[26],[$hojaIds[20]]],[$emp[0],[$hojaIds[21],$hojaIds[29]]],[$emp[1],[$hojaIds[22],$hojaIds[30]]],[$emp[3],[$hojaIds[23]]],[$emp[27],[$hojaIds[24]]],[$emp[2],[$hojaIds[25]]],[$emp[4],[$hojaIds[26]]],[$emp[28],[$hojaIds[27]]]] as [$empId,$hIds]) {
-            $imp = DB::table('hojas_produccion')->whereIn('id',$hIds)->sum('total_a_pagar');
-            if ($imp == 0) continue;
-            DB::table('corte_nomina_empleado')->insert(['corte_nomina_id'=>$c3,'empleado_id'=>$empId,'total_hojas'=>count($hIds),'importe'=>$imp,'ajuste'=>0,'total_a_pagar'=>$imp,'monto_pagado'=>$imp,'status'=>'pagado','metodo_pago'=>'transferencia','fecha_pago'=>'2026-05-17','observaciones'=>null,'created_at'=>now(),'updated_at'=>now()]);
+        foreach ([[$emp[3],[$hojaIds[15]]],[$emp[24],[$hojaIds[16]]],[$emp[25],[$hojaIds[17]]],[$emp[5],[$hojaIds[18],$hojaIds[22]]],[$emp[6],[$hojaIds[19]]],[$emp[26],[$hojaIds[20]]],[$emp[0],[$hojaIds[21]]],[$emp[1],[$hojaIds[22]]],[$emp[27],[$hojaIds[24]]],[$emp[2],[$hojaIds[25]]],[$emp[28],[$hojaIds[27]]]] as [$empId,$hIds]) {
+            $insertLinea($c3,$empId,$hIds,'pagado','2026-05-17','transferencia');
         }
 
         // Corte 4 — Quincena May-Jun (borrador)
         $c4 = DB::table('cortes_nomina')->insertGetId(['empresa_id'=>$eid,'nombre'=>'Quincena 19 May – 6 Jun 2026','fecha_inicio'=>'2026-05-19','fecha_fin'=>'2026-06-06','status'=>'borrador','observaciones'=>'Pendiente revisión y autorización.','creado_por'=>$userAdmin,'created_at'=>now(),'updated_at'=>now()]);
-        foreach ([[$emp[0],[$hojaIds[29],$hojaIds[37]]],[$emp[1],[$hojaIds[30],$hojaIds[34]]],[$emp[3],[$hojaIds[31],$hojaIds[38]]],[$emp[5],[$hojaIds[32]]],[$emp[4],[$hojaIds[35]]],[$emp[7],[$hojaIds[36]]],[$emp[29],[$hojaIds[37]]]] as [$empId,$hIds]) {
-            $hIds = array_unique(array_filter($hIds, fn($id) => DB::table('hojas_produccion')->where('id',$id)->exists()));
-            if (empty($hIds)) continue;
-            $imp = DB::table('hojas_produccion')->whereIn('id',$hIds)->sum('total_a_pagar');
-            DB::table('corte_nomina_empleado')->insert(['corte_nomina_id'=>$c4,'empleado_id'=>$empId,'total_hojas'=>count($hIds),'importe'=>$imp,'ajuste'=>0,'total_a_pagar'=>$imp,'monto_pagado'=>0,'status'=>'pendiente','metodo_pago'=>null,'fecha_pago'=>null,'observaciones'=>null,'created_at'=>now(),'updated_at'=>now()]);
+        foreach ([[$emp[0],[$hojaIds[29],$hojaIds[37]]],[$emp[1],[$hojaIds[30],$hojaIds[34]]],[$emp[3],[$hojaIds[31]]],[$emp[5],[$hojaIds[32]]],[$emp[4],[$hojaIds[35]]],[$emp[7],[$hojaIds[36]]]] as [$empId,$hIds]) {
+            $hIds = array_filter($hIds, fn($id) => isset($hojaIds[$id]) || in_array($id,$hojaIds));
+            $insertLinea($c4,$empId,$hIds,'pendiente',null,null);
         }
 
         // ══════════════════════════════════════════════════════════════════════
