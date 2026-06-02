@@ -567,9 +567,10 @@ class DatabaseSeeder extends Seeder
         foreach ($skuDef as [$estiloId,$talNoms,$colores,$costo,$venta,$prefix]) {
             foreach ($talNoms as $ti=>$talNom) {
                 $talId = $tal[min($ti, count($tal)-1)];
-                foreach ($colores as [$cc,$cn] ?? array_map(fn($c)=>[$c,$c],$colores) as $cn) {
+                foreach ($colores as $cn) {
                     $cc = strtoupper(substr(str_replace(' ','',$cn),0,2));
-                    $arts[] = DB::table('articulos')->insertGetId(['empresa_id'=>$eid,'estilo_id'=>$estiloId,'talla_id'=>$talId,'codigo_sku'=>"{$prefix}-{$cc}-{$talNom}",'nombre'=>basename(DB::table('estilos')->where('id',$estiloId)->value('nombre'))." – {$cn}",'color'=>$cn,'descripcion'=>"{$cn}, talla {$talNom}",'precio_costo'=>$costo,'precio_venta'=>$venta,'stock_actual'=>rand(8,60),'status'=>'activo','created_at'=>now(),'updated_at'=>now()]);
+                    $nombre = DB::table('estilos')->where('id',$estiloId)->value('nombre')." – {$cn}";
+                    $arts[] = DB::table('articulos')->insertGetId(['empresa_id'=>$eid,'estilo_id'=>$estiloId,'talla_id'=>$talId,'codigo_sku'=>"{$prefix}-{$cc}-{$talNom}",'nombre'=>$nombre,'color'=>$cn,'descripcion'=>"{$cn}, talla {$talNom}",'precio_costo'=>$costo,'precio_venta'=>$venta,'stock_actual'=>rand(8,60),'status'=>'activo','created_at'=>now(),'updated_at'=>now()]);
                 }
             }
         }
