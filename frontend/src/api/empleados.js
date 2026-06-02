@@ -1,0 +1,10 @@
+import api from './axios'
+export const getEmpleados = (params) => api.get('/empleados', { params })
+export const getEmpleado = (id) => api.get(`/empleados/${id}`)
+export const createEmpleado = (data) => api.post('/empleados', data)
+export const updateEmpleado = (id, data) => api.put(`/empleados/${id}`, data)
+export const deleteEmpleado = (id) => api.delete(`/empleados/${id}`)
+export const getProduccionEmpleado = (id, params) => api.get(`/empleados/${id}/produccion`, { params })
+export const getAsistencia = (params) => api.get('/asistencia', { params })
+export const registrarAsistencia = (data) => api.post('/asistencia', data)
+export const updateAsistencia = (id, data) => api.put(`/asistencia/${id}`, data)

@@ -1,0 +1,21 @@
+import api from './axios'
+export const getOrdenes = (params) => api.get('/ordenes', { params })
+export const getOrden = (id) => api.get(`/ordenes/${id}`)
+export const createOrden = (data) => api.post('/ordenes', data)
+export const updateOrden = (id, data) => api.put(`/ordenes/${id}`, data)
+export const deleteOrden = (id) => api.delete(`/ordenes/${id}`)
+// Nested
+export const getMuestras = (ordenId) => api.get(`/ordenes/${ordenId}/muestras`)
+export const createMuestra = (ordenId, data) => api.post(`/ordenes/${ordenId}/muestras`, data)
+export const updateMuestra = (id, data) => api.put(`/muestras/${id}`, data)
+export const deleteMuestra = (id) => api.delete(`/muestras/${id}`)
+export const getProcesos = (ordenId) => api.get(`/ordenes/${ordenId}/procesos`)
+export const createProceso = (ordenId, data) => api.post(`/ordenes/${ordenId}/procesos`, data)
+export const updateProceso = (id, data) => api.put(`/procesos/${id}`, data)
+export const deleteProceso = (id) => api.delete(`/procesos/${id}`)
+export const getFichas = (ordenId) => api.get(`/ordenes/${ordenId}/fichas`)
+export const createFicha = (ordenId, data) => api.post(`/ordenes/${ordenId}/fichas`, data)
+export const updateFicha = (id, data) => api.put(`/fichas/${id}`, data)
+export const deleteFicha = (id) => api.delete(`/fichas/${id}`)
+// getHojas filtered by order is handled via produccion.js
+export const getHojasByOrden = (ordenId, params) => api.get('/hojas-produccion', { params: { orden_produccion_id: ordenId, per_page: 100, ...params } })

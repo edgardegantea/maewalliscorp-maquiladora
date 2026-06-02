@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #1d4ed8;
+  --color-primary-hover: #1e40af;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #f8fafc;
+}
+
+/* Línea de escaneo QR */
+@keyframes scan-line {
+  0%   { transform: translateY(-100px); opacity: 0.8; }
+  50%  { opacity: 1; }
+  100% { transform: translateY(100px);  opacity: 0.8; }
+}
+.animate-scan-line {
+  animation: scan-line 2s ease-in-out infinite;
+}

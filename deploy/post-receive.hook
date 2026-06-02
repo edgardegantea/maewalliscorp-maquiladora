@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Hook post-receive  —  Solo despliega el BACKEND
+# Colocar en: ~/repos/maquiladora.git/hooks/post-receive
+# El frontend se sube desde la Mac con frontend_upload.sh
+# =============================================================================
+set -euo pipefail
+
+BRANCH="main"
+BACK_BASE="/var/www/maquiladora-back"
+SHARED="${BACK_BASE}/shared"
+RELEASES="${BACK_BASE}/releases"
+REPO_DIR="$HOME/repos/maquiladora.git"
+KEEP=5
+
+while read oldrev newrev ref; do
+  [[ "$ref" == "refs/heads/${BRANCH}" ]] || { echo "  → rama ignorada: $ref"; continue; }
+
+  RELEASE=$(date +%Y%m%d_%H%M%S)
+  RELEASE_DIR="${RELEASES}/${RELEASE}"
+  WORK="/tmp/maquiladora-$$"
+
+  echo "━━━ Deploy backend $RELEASE ━━━"
+
+  # 1. Exportar código del repo bare
+  mkdir -p "$WORK"
+  git --work-tree="$WORK" --git-dir="$REPO_DIR" checkout -f "$BRANCH"
+
+  # 2. Instalar dependencias PHP
+  echo "  → composer install"
+  cp -r "$WORK/backend/." "$RELEASE_DIR/"
+  cd "$RELEASE_DIR"
+  composer install --no-dev --optimize-autoloader --quiet
+
+  # 3. Enlazar .env y storage compartidos
+  ln -sf "${SHARED}/.env"    "$RELEASE_DIR/.env"
+  rm -rf "$RELEASE_DIR/storage"
+  ln -sf "${SHARED}/storage" "$RELEASE_DIR/storage"
+
+  # 4. Caché Laravel + migraciones
+  php artisan config:cache --quiet
+  php artisan route:cache  --quiet
+  php artisan view:cache   --quiet
+  php artisan migrate --force --quiet
+  echo "  → Laravel optimizado y migrado"
+
+  # 5. Activar release con symlink atómico
+  ln -sfn "$RELEASE_DIR" "${BACK_BASE}/current"
+
+  # 6. Reiniciar servicios
+  sudo systemctl restart php8.3-fpm
+  sudo systemctl reload  nginx
+
+  # 7. Limpiar releases antiguas
+  rm -rf "$WORK"
+  ls -1dt "${RELEASES}"/20* | tail -n +$((KEEP+1)) | xargs rm -rf --
+
+  echo "━━━ ✅ Backend listo: https://maquiladoraback.maewalliscorp.org ━━━"
+  echo "    Sube el frontend desde tu Mac con: bash deploy/frontend_upload.sh"
+done
