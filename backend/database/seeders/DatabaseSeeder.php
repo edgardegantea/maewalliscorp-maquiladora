@@ -92,10 +92,10 @@ class DatabaseSeeder extends Seeder
             ['Confecciones Regionales',   'Confecciones Regionales de Puebla S.A.',  'Calle 6 Oriente 18, Atlixco, Puebla',  '2444321098','ventas@confregionales.com',     'activo'],
             ['Grupo Fashion MX',          'Grupo Fashion MX S.A. de C.V.',           'Av. Insurgentes Sur 1811, CDMX',        '5541236789','ventas@groupfashionmx.com',     'activo'],
             ['Uniformes Corporativos GDL','Uniformes Corporativos de GDL S.A.',      'Av. Vallarta 3000, Guadalajara',        '3337891234','compras@ucgdl.mx',              'activo'],
-            ['Tiendas Deportivas Norte',  'Tiendas Deportivas del Norte S.A.',        'Blvd. Díaz Ordaz 450, Monterrey',      '8182345678','pedidos@tdnorte.com',           'activo'],
+            ['Tiendas Deportivas Norte',  'Tiendas Deportivas del Norte S.A.',        'Blvd. Díaz Ordaz 450, Monterrey',      '8182345678','pedidos@tdnorte.com',            'activo'],
             ['Distribuidora Jalisco',     'Distribuidora Jalisco S.R.L.',             'Calle López Mateos 112, Zapopan',       '3331234567','distribucion@jalisco.com',      'activo'],
-            ['Marca Propia Teziutlán',    'Marca Propia Teziutlán S.A.',             'Av. 5 de Mayo 44, Teziutlán',          '2317001122','mpteziutlan@gmail.com',         'activo'],
-            ['Exportaciones Textil Pue',  'Exportaciones Textil Puebla S.A. de C.V.','Blvd. Norte 890, Puebla',               '2224445566','exports@textilpue.com',         'activo'],
+            ['Marca Propia Teziutlán',    'Marca Propia Teziutlán S.A.',             'Av. 5 de Mayo 44, Teziutlán',         '2317001122','mpteziutlan@gmail.com',         'activo'],
+            ['Exportaciones Textil Pue',  'Exportaciones Textil Puebla S.A. de C.V.','Blvd. Norte 890, Puebla',                '2224445566','exports@textilpue.com',         'activo'],
         ] as [$n,$r,$d,$t,$e,$s]) {
             $cli[] = DB::table('clientes')->insertGetId(['empresa_id'=>$eid,'nombre'=>$n,'razon_social'=>$r,'domicilio'=>$d,'telefono'=>$t,'email'=>$e,'status'=>$s,'created_at'=>now(),'updated_at'=>now()]);
         }
@@ -108,33 +108,33 @@ class DatabaseSeeder extends Seeder
             ['001','María Elena',      'Ramos Vázquez',       '2317654321','mariaelenasew@gmail.com',    'activo'],
             ['002','Rosa Isela',       'Hernández Cruz',      '2317543210','rosa.hernandez@gmail.com',   'activo'],
             ['003','Ana Patricia',     'López Jiménez',       '2317432109','alopez.maq@gmail.com',       'activo'],
-            ['004','Beatriz',          'Sánchez Torres',      '2317321098', null,                         'activo'],
+            ['004','Beatriz',          'Sánchez Torres',      '2317321098', null,                          'activo'],
             ['005','Gloria Martínez',  'Pérez Reyes',         '2317210987','gloria.prez@hotmail.com',    'activo'],
-            ['006','Karla Yazmín',     'Flores González',     '2317109876', null,                         'activo'],
+            ['006','Karla Yazmín',     'Flores González',     '2317109876', null,                          'activo'],
             ['007','Sandra Monserrat', 'Reyes Luna',          '2316098765','sandrarey.costura@gmail.com','activo'],
             ['008','Juana Emilia',     'García Castillo',     '2315987654','juana.garcia.c@gmail.com',   'activo'],
-            ['009','Lucía del Carmen', 'Pérez Mendoza',       '2314876543', null,                         'activo'],
+            ['009','Lucía del Carmen', 'Pérez Mendoza',       '2314876543', null,                          'activo'],
             ['010','Patricia',         'Morales Ríos',        '2313765432','p.moralesrios@gmail.com',    'activo'],
-            ['011','Esperanza',        'Domínguez Salinas',    null,         null,                         'inactivo'],
+            ['011','Esperanza',        'Domínguez Salinas',    null,         null,                          'inactivo'],
             ['012','Verónica',         'Castro Mejía',        '2316112233','vero.castro.m@gmail.com',    'activo'],
-            ['013','Claudia Ivette',   'Méndez Ortiz',        '2317334455', null,                         'activo'],
+            ['013','Claudia Ivette',   'Méndez Ortiz',        '2317334455', null,                          'activo'],
             ['014','Silvia',           'Gutiérrez Paredes',   '2315556677','silviagtz.cos@gmail.com',    'activo'],
-            ['015','Norma Leticia',    'Aguilar Bravo',        null,         null,                         'inactivo'],
+            ['015','Norma Leticia',    'Aguilar Bravo',        null,         null,                          'inactivo'],
             ['016','Leticia',          'Fuentes Barrios',     '2317778899','leticia.fuentes@gmail.com',  'activo'],
             ['017','Irma Concepción',  'Valdés Ríos',         '2316667788','irma.valdes@hotmail.com',    'activo'],
             ['018','Carmen Gloria',    'Ruiz Espinoza',       '2315559900','carmen.ruiz.cos@gmail.com',  'activo'],
             ['019','Alicia',           'Pérez Téllez',        '2317112233','alicia.pt@gmail.com',        'activo'],
             ['020','Marisela',         'González Arriaga',    '2316223344','marisela.ga@hotmail.com',    'activo'],
-            ['021','Teresa de Jesús',  'Olvera Campos',       '2315334455', null,                         'activo'],
+            ['021','Teresa de Jesús',  'Olvera Campos',       '2315334455', null,                          'activo'],
             ['022','Hilda Margarita',  'Vargas Serrano',      '2317445566','hilda.vargas@gmail.com',     'activo'],
             ['023','Yolanda',          'Espinosa Lugo',       '2316556677','yolanda.el@gmail.com',       'activo'],
-            ['024','Rebeca',           'Montoya Torres',      '2315667788', null,                         'activo'],
+            ['024','Rebeca',           'Montoya Torres',      '2315667788', null,                          'activo'],
             ['025','Adriana',          'Cisneros Bravo',      '2317889900','adriana.cis@hotmail.com',    'activo'],
             ['026','Fernanda',         'Herrera Jiménez',     '2316001122','fernanda.hj@gmail.com',      'activo'],
-            ['027','Josefina',         'Salinas Medina',      '2315112233', null,                         'activo'],
+            ['027','Josefina',         'Salinas Medina',      '2315112233', null,                          'activo'],
             ['028','Graciela',         'Bautista Quiroz',     '2317223344','graciela.bq@gmail.com',      'activo'],
             ['029','Minerva',          'Cortés Santiago',     '2316334455','minerva.cs@gmail.com',       'activo'],
-            ['030','Eugenia',          'Maldonado Rivas',      null,         null,                         'inactivo'],
+            ['030','Eugenia',          'Maldonado Rivas',      null,         null,                          'inactivo'],
         ] as [$hue,$nom,$ape,$tel,$eml,$sts]) {
             $emp[] = DB::table('empleados')->insertGetId(['empresa_id'=>$eid,'numero_huella'=>$hue,'nombre'=>$nom,'apellidos'=>$ape,'domicilio'=>"Col. Centro, Teziutlán, Pue.",'telefono'=>$tel,'email'=>$eml,'status'=>$sts,'created_at'=>now(),'updated_at'=>now()]);
         }
@@ -163,18 +163,18 @@ class DatabaseSeeder extends Seeder
         // ══════════════════════════════════════════════════════════════════════
         $est = [];
         foreach ([
-            ['Blusa Manga Larga Dama',      'Blusa clásica manga larga para dama',              'Blusas'],
-            ['Pantalón de Vestir Dama',     'Pantalón de corte recto para dama',                'Pantalones'],
-            ['Vestido Casual',              'Vestido de uso diario, largo a la rodilla',        'Vestidos'],
-            ['Conjunto Deportivo',          'Top y short deportivo unisex',                     'Deportivo'],
-            ['Camisa Formal Caballero',     'Camisa de vestir manga larga caballero',           'Camisas'],
-            ['Falda Midi',                  'Falda hasta media pierna, corte A',                'Faldas'],
-            ['Sudadera con Capucha',        'Sudadera unisex con capucha y bolsillo canguro',   'Deportivo'],
-            ['Blusa Sin Manga Dama',        'Blusa casual sin mangas, cuello en V',             'Blusas'],
-            ['Uniforme Polo Caballero',     'Polo piqué manga corta con bordado',               'Uniformes'],
-            ['Pantalón Cargo Dama',         'Pantalón cargo con bolsillos laterales',           'Pantalones'],
-        ] as [$n,$d,$c]) {
-            $est[] = DB::table('estilos')->insertGetId(['empresa_id'=>$eid,'nombre'=>$n,'descripcion'=>$d,'categoria'=>$c,'status'=>'activo','created_at'=>now(),'updated_at'=>now()]);
+            ['EST-001', 'Blusa Manga Larga Dama',      'Blusa clásica manga larga para dama',              'Blusas'],
+            ['EST-002', 'Pantalón de Vestir Dama',     'Pantalón de corte recto para dama',                'Pantalones'],
+            ['EST-003', 'Vestido Casual',              'Vestido de uso diario, largo a la rodilla',        'Vestidos'],
+            ['EST-004', 'Conjunto Deportivo',          'Top y short deportivo unisex',                     'Deportivo'],
+            ['EST-005', 'Camisa Formal Caballero',     'Camisa de vestir manga larga caballero',           'Camisas'],
+            ['EST-006', 'Falda Midi',                  'Falda hasta media pierna, corte A',                'Faldas'],
+            ['EST-007', 'Sudadera con Capucha',        'Sudadera unisex con capucha y bolsillo canguro',   'Deportivo'],
+            ['EST-008', 'Blusa Sin Manga Dama',        'Blusa casual sin mangas, cuello en V',             'Blusas'],
+            ['EST-009', 'Uniforme Polo Caballero',     'Polo piqué manga corta con bordado',               'Uniformes'],
+            ['EST-010', 'Pantalón Cargo Dama',         'Pantalón cargo con bolsillos laterales',           'Pantalones'],
+        ] as [$codigo,$n,$d,$c]) {
+            $est[] = DB::table('estilos')->insertGetId(['empresa_id'=>$eid,'codigo'=>$codigo,'nombre'=>$n,'descripcion'=>$d,'categoria'=>$c,'status'=>'activo','created_at'=>now(),'updated_at'=>now()]);
         }
 
         // ══════════════════════════════════════════════════════════════════════
@@ -229,12 +229,12 @@ class DatabaseSeeder extends Seeder
         foreach ([
             // [nombre, desc, precio, linea_idx]
             ['Unir hombros',              'Unión piezas delantera/trasera por hombros',      0.80, 0],
-            ['Pegar mangas',              'Colocación y costura de mangas al cuerpo',         1.20, 0],
-            ['Cerrar costados',           'Cierre de costados con overlock 5 hilos',          0.90, 0],
-            ['Pegar cuello',              'Ensamble y costura de cuello terminado',           1.50, 0],
+            ['Pegar mangas',              'Colocación y costura de mangas al cuerpo',        1.20, 0],
+            ['Cerrar costados',           'Cierre de costados con overlock 5 hilos',         0.90, 0],
+            ['Pegar cuello',              'Ensamble y costura de cuello terminado',          1.50, 0],
             ['Dobladillo inferior',       'Dobladillo 1 cm parte inferior',                  0.70, 0],
-            ['Pegar cremallera',          'Colocación cierre invisible o visible',            2.00, 1],
-            ['Coser bolsillos',           'Ensamble bolsillos laterales o traseros',          1.30, 1],
+            ['Pegar cremallera',          'Colocación cierre invisible o visible',           2.00, 1],
+            ['Coser bolsillos',           'Ensamble bolsillos laterales o traseros',         1.30, 1],
             ['Basta de pantalón',         'Dobladillo inferior pantalón',                    0.80, 1],
             ['Pegar pretina',             'Colocación pretina con entretela',                1.10, 1],
             ['Revisar costuras',          'Inspección y corrección de puntadas',             0.50, 2],
@@ -284,7 +284,7 @@ class DatabaseSeeder extends Seeder
             ['TEL-005','Fleece Polar 280 g/m²',        '100% Poliéster',            150, 72.00,  95.00, 25, $prov[4]],
             ['TEL-006','Piqué 180 g/m²',              '100% Algodón',              155, 48.00, 140.00, 30, $prov[0]],
             ['TEL-007','Denim 10 oz',                 '98% ALG 2% ELA',            148, 85.00,  75.00, 20, $prov[4]],
-            ['TEL-008','Georgette Liviano',            '100% Poliéster',            145, 32.00,  55.00, 15, $prov[3]],
+            ['TEL-008','Georgette Liviano',             '100% Poliéster',            145, 32.00,  55.00, 15, $prov[3]],
         ] as [$cod,$nom,$comp,$ancho,$precio,$stock,$stockMin,$provId]) {
             $telas[] = DB::table('telas')->insertGetId(['empresa_id'=>$eid,'proveedor_id'=>$provId,'codigo'=>$cod,'nombre'=>$nom,'composicion'=>$comp,'ancho_cm'=>$ancho,'unidad'=>'metro','precio_unitario'=>$precio,'stock_actual'=>$stock,'stock_minimo'=>$stockMin,'status'=>'activo','created_at'=>now(),'updated_at'=>now()]);
         }
@@ -341,24 +341,24 @@ class DatabaseSeeder extends Seeder
         $ordenesDef = [
             // [$cod,$cliIdx,$prio,$mod,$cor,$ent,$sts,$cortC,$obs,$estIdx,$cant]
             ['OP-2026-001',$cli[0],'alta',  'BL-MANGA-045','C-0501','2026-06-05','en_proceso', false,'Entrega urgente. Algodón pima.',       0,1200],
-            ['OP-2026-002',$cli[1],'media', 'PT-VESTIR-12','C-0489','2026-06-15','en_proceso', true, 'Slim fit. Verificar medidas.',          1, 800],
-            ['OP-2026-003',$cli[2],'alta',  'VE-CASUAL-08','C-0502','2026-06-02','pendiente',  false,'Muestra pendiente de aprobación.',      2, 500],
+            ['OP-2026-002',$cli[1],'media', 'PT-VESTIR-12','C-0489','2026-06-15','en_proceso', true, 'Slim fit. Verificar medidas.',         1, 800],
+            ['OP-2026-003',$cli[2],'alta',  'VE-CASUAL-08','C-0502','2026-06-02','pendiente',  false,'Muestra pendiente de aprobación.',     2, 500],
             ['OP-2026-004',$cli[3],'baja',  'UN-POLO-031', 'C-0478','2026-05-20','completada', true, 'Entrega completada sin observaciones.', 8, 750],
-            ['OP-2026-005',$cli[0],'media', 'BL-FORMAL-22','C-0510','2026-06-20','pendiente',  false,null,                                    0, 600],
-            ['OP-2026-006',$cli[4],'alta',  'FA-MIDI-004', 'C-0518','2026-06-10','en_proceso', true, 'Exportación. Tres lotes parciales.',    5, 600],
-            ['OP-2026-007',$cli[5],'media', 'SD-CAP-007',  'C-0522','2026-06-28','pendiente',  false,'Primera orden de este cliente.',        6, 400],
+            ['OP-2026-005',$cli[0],'media', 'BL-FORMAL-22','C-0510','2026-06-20','pendiente',  false,null,                                  0, 600],
+            ['OP-2026-006',$cli[4],'alta',  'FA-MIDI-004', 'C-0518','2026-06-10','en_proceso', true, 'Exportación. Tres lotes parciales.',   5, 600],
+            ['OP-2026-007',$cli[5],'media', 'SD-CAP-007',  'C-0522','2026-06-28','pendiente',  false,'Primera orden de este cliente.',       6, 400],
             ['OP-2026-008',$cli[2],'baja',  'CM-FORM-010', 'C-0495','2026-05-20','cancelada',  false,'Cancelada. Reutilizar tela en OP-005.', 4,null],
-            ['OP-2026-009',$cli[6],'alta',  'BL-SIN-MAN-3','C-0530','2026-06-08','en_proceso', true, 'Blusa sin manga, colección verano.',    7, 900],
+            ['OP-2026-009',$cli[6],'alta',  'BL-SIN-MAN-3','C-0530','2026-06-08','en_proceso', true, 'Blusa sin manga, colección verano.',   7, 900],
             ['OP-2026-010',$cli[7],'media', 'UN-POLO-044', 'C-0535','2026-06-25','pendiente',  false,'Uniformes corporativos. Bordado logo.', 8, 500],
-            ['OP-2026-011',$cli[8],'alta',  'CJ-DEP-015',  'C-0540','2026-06-12','en_proceso', false,'Conjunto deportivo. Urgente.',          3, 700],
-            ['OP-2026-012',$cli[9],'baja',  'FA-MIDI-008', 'C-0544','2026-07-05','pendiente',  false,'Segunda remesa falda midi.',            5, 400],
+            ['OP-2026-011',$cli[8],'alta',  'CJ-DEP-015',  'C-0540','2026-06-12','en_proceso', false,'Conjunto deportivo. Urgente.',         3, 700],
+            ['OP-2026-012',$cli[9],'baja',  'FA-MIDI-008', 'C-0544','2026-07-05','pendiente',  false,'Segunda remesa falda midi.',           5, 400],
             ['OP-2026-013',$cli[10],'media','PT-CARGO-001','C-0548','2026-06-30','pendiente',  false,'Pantalón cargo, primera orden.',         9, 350],
-            ['OP-2026-014',$cli[11],'alta', 'VE-CASUAL-12','C-0552','2026-06-18','en_proceso', true, 'Exportación vestidos casuales.',         2, 650],
-            ['OP-2026-015',$cli[0],'media', 'BL-MANGA-060','C-0556','2026-07-10','pendiente',  false,'Reorden blusa manga larga.',             0, 800],
-            ['OP-2026-016',$cli[1],'alta',  'PT-VESTIR-20','C-0560','2026-06-22','en_proceso', true, 'Pantalón vestir dama colores.',          1, 600],
-            ['OP-2026-017',$cli[3],'baja',  'UN-POLO-055', 'C-0564','2026-07-15','pendiente',  false,'Próxima temporada uniformes.',           8, 1000],
+            ['OP-2026-014',$cli[11],'alta', 'VE-CASUAL-12','C-0552','2026-06-18','en_proceso', true, 'Exportación vestidos casuales.',       2, 650],
+            ['OP-2026-015',$cli[0],'media', 'BL-MANGA-060','C-0556','2026-07-10','pendiente',  false,'Reorden blusa manga larga.',            0, 800],
+            ['OP-2026-016',$cli[1],'alta',  'PT-VESTIR-20','C-0560','2026-06-22','en_proceso', true, 'Pantalón vestir dama colores.',         1, 600],
+            ['OP-2026-017',$cli[3],'baja',  'UN-POLO-055', 'C-0564','2026-07-15','pendiente',  false,'Próxima temporada uniformes.',          8, 1000],
             ['OP-2026-018',$cli[4],'media', 'FA-MIDI-010', 'C-0568','2026-07-20','pendiente',  false,'Lote exportación faldas.',               5, 450],
-            ['OP-2026-019',$cli[5],'alta',  'SD-CAP-012',  'C-0572','2026-07-01','pendiente',  false,'Sudadera negra y gris.',                 6, 600],
+            ['OP-2026-019',$cli[5],'alta',  'SD-CAP-012',  'C-0572','2026-07-01','pendiente',  false,'Sudadera negra y gris.',                6, 600],
             ['OP-2026-020',$cli[6],'media', 'BL-SIN-MAN-5','C-0576','2026-07-08','pendiente',  false,'Blusa sin manga colores básicos.',       7, 700],
         ];
         // Detectar si las columnas nuevas ya existen (migración 2026_06_02)
@@ -577,7 +577,7 @@ class DatabaseSeeder extends Seeder
         $skuDef = [
             [$est[0],['S','M','L','XL'],['Blanco','Azul Rey','Negro'],   89.00,199.00,'BL-MLR'],
             [$est[1],['S','M','L','XL'],['Gris Oxford','Negro','Marino'],120.00,280.00,'PT-SLM'],
-            [$est[5],['XS','S','M','L','XL'],['Blanco','Negro'],          95.00,210.00,'FA-MIDI'],
+            [$est[5],['XS','S','M','L','XL'],['Blanco','Negro'],         95.00,210.00,'FA-MIDI'],
             [$est[6],['S','M','L','XL'],['Gris','Negro','Azul'],         110.00,250.00,'SD-CAP'],
             [$est[7],['S','M','L','XL'],['Blanco','Coral','Verde'],       75.00,170.00,'BL-SIN'],
             [$est[8],['S','M','L','XL','XXL'],['Blanco','Azul','Negro'],  65.00,149.00,'UN-POLO'],
@@ -615,7 +615,7 @@ class DatabaseSeeder extends Seeder
         $listas = [];
         foreach ([
             ['Lista General 2026',       'Precios sugeridos al público',           'general','2026-01-01','2026-12-31'],
-            ['Lista Mayoreo Temporada',  'Pedidos mayores a 100 pzas. –20%',      'mayoreo','2026-04-01','2026-09-30'],
+            ['Lista Mayoreo Temporada',  'Pedidos mayores a 100 pzas. –20%',       'mayoreo','2026-04-01','2026-09-30'],
             ['Lista Boutique Primavera', 'Precios acordados Boutique Primavera',  'cliente','2026-01-01','2026-12-31'],
             ['Lista Exportación',        'Precios exportación USD equivalente',   'cliente','2026-01-01','2026-12-31'],
         ] as [$n,$d,$t,$fi,$ff]) {
@@ -683,9 +683,6 @@ class DatabaseSeeder extends Seeder
 
         // ══════════════════════════════════════════════════════════════════════
         // 25. CORTES DE NÓMINA (4)
-        // Columnas reales en corte_nomina_empleado:
-        //   num_hojas, total_hojas (decimal), deducciones, total_neto,
-        //   status, fecha_pago, metodo_pago, referencia_pago, observaciones
         // ══════════════════════════════════════════════════════════════════════
         $insertLinea = function(int $corteId, int $empId, array $hIds, string $status, ?string $fechaPago, ?string $metodo) {
             $hIds = array_unique(array_filter($hIds, fn($id) => isset($id)));
@@ -744,9 +741,9 @@ class DatabaseSeeder extends Seeder
             $this->command->info('');
             $this->command->info('✔  Base de datos poblada correctamente.');
             $this->command->info('');
-            $this->command->info('   ADMIN     admin@maewallis.com      / Admin2026!');
-            $this->command->info('   ENCARGADO encargado@maewallis.com  / Encargado2026!');
-            $this->command->info('   EMPLEADO  empleado@maewallis.com   / Empleado2026!');
+            $this->command->info('   ADMIN      admin@maewallis.com      / Admin2026!');
+            $this->command->info('   ENCARGADO  encargado@maewallis.com  / Encargado2026!');
+            $this->command->info('   EMPLEADO   empleado@maewallis.com   / Empleado2026!');
             $this->command->info('');
             $this->command->table(['Tabla','Registros'], [
                 ['empleados',              DB::table('empleados')->count()],
