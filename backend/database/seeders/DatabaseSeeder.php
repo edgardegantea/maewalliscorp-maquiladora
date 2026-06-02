@@ -9,8 +9,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        foreach ([
+        $tables = [
             'corte_nomina_empleado','cortes_nomina',
             'permisos_empleado','aclaraciones_produccion',
             'lista_precio_articulos','listas_precios',
@@ -39,8 +38,19 @@ class DatabaseSeeder extends Seeder
             'empleados',
             'users',
             'empresas',
-        ] as $t) { DB::table($t)->truncate(); }
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        ];
+
+        $driver = DB::getDriverName();
+        if ($driver === 'pgsql') {
+            // PostgreSQL: truncar todo en una sola sentencia con CASCADE
+            $quoted = implode(', ', array_map(fn($t) => '"'.$t.'"', $tables));
+            DB::statement("TRUNCATE TABLE {$quoted} RESTART IDENTITY CASCADE");
+        } else {
+            // MySQL / SQLite
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            foreach ($tables as $t) { DB::table($t)->truncate(); }
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        }
 
         // ══════════════════════════════════════════════════════════════════════
         // 1. EMPRESA
